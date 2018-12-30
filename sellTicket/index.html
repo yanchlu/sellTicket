@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>票务系统</title>
+		<link rel="stylesheet" href="css/style.css" />
+		<script src="js/web3.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+		<script language="javascript">
+			isStarted = false;
+	        if (typeof web3 !== 'undefined') {
+	            web3 = new Web3(web3.currentProvider);
+	        } else {
+	            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545/"));
+	        }
+			web3.eth.defaultAccount = web3.eth.coinbase;	
+			var api = [{"constant":false,"inputs":[{"name":"tid","type":"uint256"},{"name":"num","type":"uint256"},{"name":"sender","type":"address"}],"name":"buyTicket","outputs":[],"payable":false,"type":"function","stateMutability":"nonpayable"},{"constant":false,"inputs":[{"name":"id","type":"uint256"},{"name":"p","type":"uint256"},{"name":"c","type":"uint256"},{"name":"sender","type":"address"}],"name":"publishTicket","outputs":[],"payable":false,"type":"function","stateMutability":"nonpayable"},{"constant":true,"inputs":[],"name":"getaddress","outputs":[{"name":"","type":"address"}],"payable":false,"type":"function","stateMutability":"view"},{"constant":false,"inputs":[{"name":"c","type":"address"}],"name":"showWallet","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function","stateMutability":"nonpayable"},{"constant":false,"inputs":[{"name":"c","type":"address"},{"name":"money","type":"uint256"}],"name":"Recharge","outputs":[],"payable":false,"type":"function","stateMutability":"nonpayable"},{"constant":true,"inputs":[{"name":"id","type":"uint256"}],"name":"showTicketAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function","stateMutability":"view"},{"constant":true,"inputs":[],"name":"showflag","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function","stateMutability":"view"},{"constant":true,"inputs":[{"name":"id","type":"uint256"}],"name":"showTicketPrice","outputs":[{"name":"","type":"uint256"}],"payable":false,"type":"function","stateMutability":"view"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"TicketSet","outputs":[{"name":"tid","type":"uint256"},{"name":"price","type":"uint256"},{"name":"amount","type":"uint256"}],"payable":false,"type":"function","stateMutability":"view"},{"constant":false,"inputs":[{"name":"tid","type":"uint256"},{"name":"num","type":"uint256"},{"name":"sender","type":"address"}],"name":"refundTicket","outputs":[],"payable":false,"type":"function","stateMutability":"nonpayable"},{"inputs":[],"type":"constructor","payable":true,"stateMutability":"payable"}];	
+			var sellTicketContract = web3.eth.contract(api);
+			var st = sellTicketContract.at("0xf15987bb1cdad4e944beb01f6c86681e1ecd20d8");
+			
+			function publishTicket(){
+				var address = document.getElementById("UserAddress").value;
+	            var s_id = document.getElementById("ticketid").value;
+	            var id = parseInt(s_id);
+	            var s_price = document.getElementById("ticketprice").value;
+	            var price = parseInt(s_price);
+	            var s_num = document.getElementById("ticketnumber").value;
+	            var num = parseInt(s_num);
+	            st.publishTicket(id,price,num,address);
+	            flag = st.showflag();
+	            if(flag == 1){
+	            	alert("发行失败，票号已经存在");            	
+	            }
+	            else if(flag == 2){
+	            	alert("发行失败，只有卖家才能发行");
+	            }
+	            else if(flag == 3){
+	            	alert("成功发行票务");
+	            }
+			}
+			
+			function buyTicket(){
+				var address = document.getElementById("UserAddress").value;
+	            var s_id = document.getElementById("ticketid").value;
+	            var id = parseInt(s_id);
+	            var s_price = document.getElementById("ticketprice").value;
+	            var price = parseInt(s_price);
+	            var s_num = document.getElementById("ticketnumber").value;
+	            var num = parseInt(s_num);
+	            st.buyTicket(id,num,address);
+	            flag = st.showflag();
+	            if(flag == 1){
+	            	alert("购买失败，票号不存在");            	
+	            }
+	            else if(flag == 2){
+	            	alert("购买失败，钱包余额不足");
+	            }
+	            else if(flag == 3){
+	            	alert("购买失败，剩余票数不足");
+	            }
+	            else if(flag == 4){
+	            	alert("购买成功");
+	            }
+			}
+			
+			function refundTicket(){
+				var address = document.getElementById("UserAddress").value;
+	            var s_id = document.getElementById("ticketid").value;
+	            var id = parseInt(s_id);
+	            var s_price = document.getElementById("ticketprice").value;
+	            var price = parseInt(s_price);
+	            var s_num = document.getElementById("ticketnumber").value;
+	            var num = parseInt(s_num);
+	            st.refundTicket(id,num,address);
+	            flag = st.showflag();
+	            if(flag == 1){
+	            	alert("退票失败，票号不存在");            	
+	            }
+	            else if(flag == 3){
+	            	alert("退票失败，退票数大于持票数");  
+	            }
+	            else if(flag == 3){
+	            	alert("退票成功");
+	            }
+			}
+			
+			function showTicket(){
+				var s_id = document.getElementById("showT").value;
+	            var tid = parseInt(s_id);
+	            
+	            var id = document.getElementById("showid");
+	            id.innerHTML = tid;
+	            
+	            var price = document.getElementById("showprice");
+	            var gprice = st.showTicketPrice(tid);
+	            price.innerHTML = gprice;
+
+	            var num = document.getElementById("shownumber");
+	            var gnum = st.showTicketAmount(tid);
+	            num.innerHTML = gnum;                     
+			}
+	        
+		</script>
+	</head>
+	<body>
+		<div id = "box">
+			<form action="/" method="post">
+			<h2>票务系统</h2>
+				<ul>
+					<li><span>地址</span><input type="text" id="UserAddress"></li>
+					<li><span>票号</span><input type="text" id="ticketid"></li>
+					<li><span>价格</span><input type="text" id="ticketprice"></li>
+					<li><span>数量</span><input type="text" id="ticketnumber"></li>
+				</ul>
+				<input type="reset" value="重置" id="reset"/>
+				<input type="button" id="publishTicket" value="发行新票" onclick="publishTicket()" />
+				<input type="button" id="buyTicket" value="购票" onclick="buyTicket()" />
+				<input type="button" id="refundTicket" value="退票" onclick="refundTicket()" />
+			<div id="Tips">
+				<p>注意：<br />
+				1.系统会根据地址信息核实身份<br />
+				2.只有卖家才能发行新票<br />
+				3.买家购票、退票时，不需填写价格</p>
+			</div>
+			</form>
+			<div  id = "checkTicket">
+				<span>票号</span><input type="text" id="ticketid">
+				<input type="button" id="showT" value="查票" onclick="showTicket()"/>
+				<table border="1">
+				    <tr>
+				        <td>票号</td>
+				        <td>价格</td>
+				        <td>数量</td>
+				    </tr>
+				    <tr>
+				        <td id = "showid">无</td>
+				        <td id = "showprice">无</td>
+				        <td id = "showNumber">无</td>
+				    </tr>
+				</table>
+			</div>
+		</div>
+	</body>
+	
+</html>

@@ -1,0 +1,68 @@
+body{
+	margin: auto;
+	text-align: center;
+	background-image: url(../img/bg.jpg);
+	background-repeat:no-repeat ;
+	background-size:cover;
+}
+
+#box{
+	margin: auto;
+	width: 400px;
+	margin-top: 170px;
+	border: 4px mediumseagreen solid;
+	background: white;
+	opacity: 0.95;
+	//height: 570px;
+}
+#box2{
+	margin: auto;
+	width: 350px;
+	margin-top: 170px;
+	border: 4px mediumseagreen solid;
+	background: white;
+	opacity: 0.95;
+	height: 200px;
+	font-size: 12pt;
+}
+#Tips{
+	width: 300px;
+	text-align: left;
+	margin: auto;
+	background-color:peachpuff ;
+}
+#checkTicket{
+	width: 300px;
+	text-align: left;
+	margin: auto;
+	margin-bottom: 20px;
+
+}
+#checkTicket td,tr{
+	width: 100px;
+	text-align: left;
+	margin: auto;
+}
+#Tips p{
+	margin-left: 15px;
+	padding-bottom: 5px;
+}
+ul{
+	list-style: none;
+}
+li{
+	margin: 5px;
+	text-align: center;
+}
+ul span{
+	display: inline-block;
+	position: relative;
+	width: 55px;
+	text-align: left;
+}
+ul input{
+	background-color:lightyellow ;
+}
+.warn{
+	color: red;
+}
